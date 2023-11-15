@@ -288,7 +288,6 @@ func (ut *UltimateTicTacToe) Copy() UltimateTicTacToe {
 }
 
 func main() {
-
 	ut := NewUltimateTicTacToe()
 	for {
 		var opponentRow, opponentCol int
@@ -307,8 +306,7 @@ func main() {
 		l := availableMoves
 		rand.Shuffle(len(l), func(i, j int) { l[i], l[j] = l[j], l[i] })
 
-		moveScore := make([]int, len(availableMoves))
-
+		winnerMoveScore := make([]int, len(availableMoves))
 		start := time.Now()
 		nMoves := len(availableMoves)
 		for j := 0; j < 1000000; j++ {
@@ -320,6 +318,12 @@ func main() {
 			r := l[i].row
 			c := l[i].col
 			targetWinner := copyUt.playerTurn
+			var targetLoser int
+			if targetWinner == 1 {
+				targetLoser = 2
+			} else {
+				targetLoser = 1
+			}
 			copyUt.PlaceMove(r, c)
 			for {
 				if copyUt.CheckWin() > 0 {
@@ -333,21 +337,23 @@ func main() {
 				copyUt.PlaceMove(move.row, move.col)
 
 			}
-			if copyUt.CheckWin() == targetWinner {
-				moveScore[i] += 1
+			winner := copyUt.CheckWin()
+			if winner == targetWinner {
+				winnerMoveScore[i] += 1
+			} else if winner == targetLoser {
+				winnerMoveScore[i] -= 1
 			}
 		}
-		elapsed := time.Since(start)
-		fmt.Fprintf(os.Stderr,"%v\n", elapsed.Milliseconds())
 
-		var nextMove = Position{row:-1, col:-1}
-		moveMaxScore := 0
-		for i := 0; i < len(moveScore); i++ {
-			if moveScore[i] >= moveMaxScore {
-				moveMaxScore = moveScore[i]
-				nextMove = availableMoves[i]
+		var nextWinnerMove = Position{row:-1, col:-1}
+		winnerMaxScore := -1000000
+		for i := 0; i < len(winnerMoveScore); i++ {
+			if winnerMoveScore[i] >= winnerMaxScore {
+				winnerMaxScore = winnerMoveScore[i]
+				nextWinnerMove = availableMoves[i]
 			}
 		}
+		nextMove := nextWinnerMove
 		ut.PlaceMove(nextMove.row, nextMove.col)
 
 		fmt.Printf("%d %d\n", nextMove.row, nextMove.col)
