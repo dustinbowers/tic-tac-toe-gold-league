@@ -9,7 +9,7 @@ A bot to play the Ultimate TicTacToe puzzle on Codingame.com using the Monte Car
 | Wood      | 1st         |
 | Bronze    | 1st         |
 | Silver    | 1st         |
-| Gold      | 503 of 1047 |
+| Gold      | 410 of 1047 |
 | Legendary | -           |
 
 # More Info
